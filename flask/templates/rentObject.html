@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+<form action="" method="post" class="form-contact">
+    <p><label>Выберите Объект:</label>
+        <p></p>
+            <select name="object">
+                {% for o in propertyObjects %}
+                    <option value={{o.ObjectId}}>{{ o.ObjectName }}</option>
+                {% endfor %}
+            </select>
+            <p></p>    
+            <p><label>Выберите Договор:</label>
+                <select name="rent"/>
+                    {% for r in rent %}
+                            <option value={{r.RentId}}>{{ r.ContractNumber }}</option>
+                    {% endfor %}
+                </select>     
+    <p><input type="submit" value="Прикрепить объект к выбранному Договору"/>
+    </form>
+{% endblock %}

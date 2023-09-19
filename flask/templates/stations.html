@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+
+<!-- Форма добавления станций на случай необходимости такого функционала -->
+<!-- При активации - будет необходимо воспользоваться alias для создания ссылок-->
+<!--h2>Добавить Станцию</h2-->
+<!--form action="{{url_for('stations')}}" method="post" class="form-contact">
+<p><label>Название станции</label>
+        <p></p>
+        <input type="text" name="name" value="" required />
+<p><label>Адрес для страницы станции</label>
+        <p></p>
+        <input type="text" name="url" value="" required />
+<p><input type="submit" value="Добавить станцию"/>
+</form -->
+<h2>Список Станций</h2>
+<div>
+    {% block station %}
+    <ul class="stations">
+            {% for s in stations -%}
+    <li><a href="{{s.url}}">{{s.StationName}}</a></li>
+            {% endfor -%}
+    </ul>
+    {% endblock %}
+            <p>Для перехода в режим редактирования станции кликните на её название</p>
+    </div>
+{% endblock -%}

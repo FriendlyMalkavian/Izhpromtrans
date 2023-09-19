@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+<form action="" method="post" class="form-contact">
+    <p><label>Введите Номер договора</label></p>
+        <input type="text" name="name" value="" required />
+    <p><label>Введите ежемесячный платеж договора</label></p>
+        <input type="text" name="price" value="" required />
+    <p><label>Выберите Арендатора</label>
+        <p></p>
+            <select name="TenantsList"/>
+                {% for t in tenants %}
+                    <option value={{t.TenantId}}>{{ t.TenantName }}</option>
+                {% endfor %}
+    <p><input type="submit" value="Добавить Договор"/>
+    </form>
+    <h2>Список Договоров</h2>
+    <div>
+        {% block rent %}
+        <ul class="rent">
+                {% for r in rent -%}
+        <li><a>{{r.ContractNumber}}</a></li>
+                {% endfor -%}
+        </ul>
+        {% endblock %}
+        </div>
+    <h3>Редактирование</h3>
+    <li><a href="/rentObject">{{"Добавить объекты в Договора"}}</a></li>
+{% endblock %}

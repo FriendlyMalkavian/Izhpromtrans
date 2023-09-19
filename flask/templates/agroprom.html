@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+<h2>Добавить объекты на Станцию Агропром</h2>
+<form action="" method="post" class="form-contact">
+    <p><label>Выберите Объект:</label>
+        <p></p>
+            <select name="name">
+                {% for o in propertyObjects %}
+                    <option value={{o.ObjectId}}>{{ o.ObjectName }}</option>
+                {% endfor %}
+            </select>
+            <p></p>    
+            <p><label>Выберите Сертификат:</label>
+                <select name="number"/>
+                    {% for c in certificates %}
+                        {% if c.StationId == 2 %}
+                            <option value={{c.CertificateId}}>{{ c.RegistrationNumber }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>     
+    <p><input type="submit" value="Прикрепить объект"/>
+    </form>
+    <div>
+        {% block objects %}
+        <h2>Объекты, находящиеся на станции Агропром</h2>
+        <ul class="objects">
+                {% for g in objectsInCertificate if g.StationId == 2 -%}
+                        {% for p in propertyObjects -%}
+                            {% if p.ObjectId|int() == g.ObjectId|int()-%}
+                                <li><p>{{p.ObjectName}}</p></li>
+                            {% endif %}
+                        {% endfor -%}
+                {% endfor -%}
+        </ul>
+        {% endblock %}
+        </div>
+{% endblock %}

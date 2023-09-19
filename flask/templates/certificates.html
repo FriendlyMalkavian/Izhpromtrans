@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+<form action="" method="post" class="form-contact">
+    <p><label>Введите Регистрационный номер сертификата</label></p>
+    <input type="text" name="name" value="" required />
+    <p><label>Введите длину пути</label></p>
+    <input type="text" name="length" value="" required />
+    <p><label>Введите Кадастровый номер сертификата</label></p>
+    <input type="text" name="cadastr" value="" required />
+    <p><label>Выберите станцию</label>
+        <p></p>
+            <select name="StationList"/>
+                {% for s in stations %}
+                    <option value={{s.StationId}}>{{ s.StationName }}</option>
+                {% endfor %}    
+    <p><input type="submit" value="Добавить Сертификат"/>
+    </form>
+{% endblock %}
