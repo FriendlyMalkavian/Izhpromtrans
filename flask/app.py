@@ -34,6 +34,14 @@ def get_db():
         g.link_db = connect_db()
     return g.link_db
 
+dbase = None
+@app.before_request
+def before_request():
+    """Установление соединения с БД перед выполнением запроса"""
+    global dbase
+    db = get_db()
+    dbase = FDataBase(db)
+
 @app.route("/")
 def index():
     db = get_db()
@@ -44,7 +52,6 @@ def index():
 def stations():
     db = get_db()
     dbase = FDataBase(db)
-
     if request.method == "POST":
         if len(request.form['name']) >= 4 :
             res = dbase.stations(request.form['name'], request.form['url'])
@@ -74,33 +81,6 @@ def certificates():
     
     return render_template('certificates.html', menu=dbase.getMenu(), title="Добавить Сертификат", stations=dbase.getStationAnonce())
 
-@app.route("/agroprom", methods=["POST", "GET"])
-def agroprom():
-    db = get_db()
-    dbase = FDataBase(db)
-    if request.method == "POST":
-        res = dbase.objectsInCertificates(request.form['name'], request.form['number'], 2)
-        if not res:
-            flash('Ошибка добавления Объекта', category='error')
-        else:
-            flash('Объект успешно добавлен в Сертификат', category='success')
-
-    return render_template('agroprom.html', menu=dbase.getMenu(), certificates=dbase.getCertificateAnonce(), propertyObjects=dbase.getObjectAnonce(), 
-                           objectsInCertificate=dbase.getObjectInCertificatesAnonce(), title="Станция Агропром")
-
-@app.route("/zarya", methods=["POST", "GET"])
-def zarya():
-    db = get_db()
-    dbase = FDataBase(db)
-    if request.method == "POST":
-        res = dbase.objectsInCertificates(request.form['name'], request.form['number'], 1)
-        if not res:
-            flash('Ошибка добавления Объекта', category='error')
-        else:
-            flash('Объект успешно добавлен в Сертификат', category='success')
-
-    return render_template('zarya.html', menu=dbase.getMenu(), certificates=dbase.getCertificateAnonce(), propertyObjects=dbase.getObjectAnonce(), 
-                           objectsInCertificate=dbase.getObjectInCertificatesAnonce(), title="Станция Заря")
 
 @app.route("/objects", methods=["POST", "GET"])
 def objects():
@@ -140,7 +120,7 @@ def rent():
     dbase = FDataBase(db)
     if request.method == "POST":
         if len(request.form['name']) >= 4 :
-            res = dbase.certificates(request.form['name'], request.form['price'], request.form['TenantList'])
+            res = dbase.rent(request.form['name'], request.form['price'], request.form['TenantsList'])
             if not res:
                 flash('Ошибка добавления Договора', category='error')
             else:
@@ -164,7 +144,20 @@ def rentObject():
     return render_template('rentObject.html', menu=dbase.getMenu(),  propertyObjects=dbase.getObjectAnonce(), rent=dbase.getRentAnonce(),
                            rentalObjects=dbase.getRentalObjectsAnonce(), title="Добавление объектов в Договора")
 
-    
+@app.route("/stations/<alias>", methods=["POST", "GET"])
+def showStation(alias):
+    StationId, StationName, url = dbase.getStations(alias)
+    if request.method == "POST":
+        res = dbase.objectsInCertificates(request.form['name'], request.form['number'], alias)
+        if not res:
+            flash('Ошибка добавления Объекта', category='error')
+        else:
+            flash('Объект успешно добавлен в Сертификат', category='success')
+
+    return render_template('station.html', menu=dbase.getMenu(), certificates=dbase.getCertificateAnonce(), propertyObjects=dbase.getObjectAnonce(), 
+                           objectsInCertificate=dbase.getObjectInCertificatesAnonce(), StationId=StationId, StationName=StationName, title=StationName)  
+
+
 
 @app.teardown_appcontext
 def close_db(error):

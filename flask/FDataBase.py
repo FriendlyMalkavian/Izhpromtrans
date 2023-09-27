@@ -17,7 +17,7 @@ class FDataBase:
     
     def getStations(self, alias): 
         try:
-            self.__cur.execute(f"SELECT StationName FROM stations WHERE url LIKE '{alias}' LIMIT 1")
+            self.__cur.execute(f"SELECT StationId, StationName, url FROM stations WHERE StationId = '{alias}' LIMIT 1")
             res = self.__cur.fetchone()
             if res: 
                 return res
